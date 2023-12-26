@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "dovizApp",
-    "slug": "dovizApp",
+    "name": "firstapp",
+    "slug": "firstapp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
