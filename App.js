@@ -1,3 +1,30 @@
+<<<<<<< HEAD
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+
+import 'firebase/auth';
+
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+import Login from './screens/Login';
+import Register from './screens/Register';
+
+import app from './firebaseConfig'; // firebaseConfig dosyanızın bulunduğu yola göre düzenleyin
+
+
+const Stack = createNativeStackNavigator();
+
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Register" component={Register} />
+      </Stack.Navigator>
+    </NavigationContainer>
+=======
 import React, {Component} from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
@@ -42,6 +69,7 @@ export default function App() {
       {getContent()}
       <StatusBar style="auto" />
     </View>
+>>>>>>> 43dfbbb35dd37593fa3c77c22acef6bdff9f36cc
   );
 }
 
