@@ -1,12 +1,7 @@
 {
   "expo": {
-<<<<<<< HEAD
-    "name": "dovizUygulama",
-    "slug": "dovizUygulama",
-=======
-    "name": "firstapp",
-    "slug": "firstapp",
->>>>>>> 43dfbbb35dd37593fa3c77c22acef6bdff9f36cc
+    "name": "doviz",
+    "slug": "doviz",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
