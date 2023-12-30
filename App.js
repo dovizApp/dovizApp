@@ -1,46 +1,77 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text } from 'react-native';
-import xml2js from 'react-native-xml2js';
+import Login from './screens/Login';
+import Register from './screens/Register';
+import AdminDashboard from './components/AdminDashboard';
+import UserDashboard from './components/UserDashboard';
 
-const ExchangeRates = () => {
-  const [rates, setRates] = useState(null);
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth, db } from './firebaseConfig';
+
+//import app from './firebaseConfig'; // firebaseConfig dosyanızın bulunduğu yola göre düzenleyin
+
+
+const Stack = createNativeStackNavigator();
+
+export default function App() {
+  const [user, setUser] = useState(null);
+  const [initializing, setInitializing] = useState(true);
+
+  const onAuthStateChangedHandler = (user) => {
+    setUser(user);
+    setInitializing(false);
+  };
 
   useEffect(() => {
-    const fetchExchangeRates = async () => {
-      try {
-        const response = await fetch('https://www.tcmb.gov.tr/kurlar/today.xml');
-        const xmlData = await response.text();
+    const unsubscribe = onAuthStateChanged(auth, onAuthStateChangedHandler);
 
-        // XML verisini JavaScript nesnelerine dönüştürme
-        xml2js.parseString(xmlData, (err, result) => {
-          if (err) {
-            console.error('XML parse hatası:', err);
-            return;
-          }
-
-          // Döviz kurları JavaScript nesneleri olarak result objesinde bulunabilir
-          const currencyRates = result.Tarih_Date.Currency;
-          setRates(currencyRates);
-        });
-      } catch (error) {
-        console.error('Veri çekme hatası:', error);
-      }
-    };
-
-    fetchExchangeRates();
+    return () => unsubscribe();
   }, []);
 
-  return (
-    <View>
-      <Text>Döviz Kurları:</Text>
-      {rates &&
-        rates.map((rate, index) => (
-          <Text key={index}>
-            {rate.$.Kod}: {rate.ForexSelling.map((selling) => selling)}
-          </Text>
-        ))}
-    </View>
-  );
-};
+  if (initializing) {
+    return null; // Auth durumu başlatılıyor ise bir şey gösterme
+  }
 
-export default ExchangeRates;
+  if (!user) {
+    return (
+      // Kullanıcı oturumu açmamışsa giriş ekranını göster
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Login">
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Register" component={Register} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+  }
+
+  if (user && user.roles && user.roles.includes('admin')) {
+    return (
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="AdminDashboard">
+          <Stack.Screen name="AdminDashboard" component={AdminDashboard} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+  } else {
+    return (
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="UserDashboard">
+          <Stack.Screen name="UserDashboard" component={UserDashboard} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

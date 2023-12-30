@@ -1,14 +1,20 @@
 import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore"
+
 
 const firebaseConfig = {
-  apiKey: "AIzaSyANBXlswskaQGouraZ1p8pF4uYrqjkfsms",
-  authDomain: "dovizuygulama.firebaseapp.com",
-  projectId: "dovizuygulama",
-  storageBucket: "dovizuygulama.appspot.com",
-  messagingSenderId: "629754913659",
-  appId: "1:629754913659:web:7bc133e9717a75fc5213de",
-  measurementId: "G-W1P54Y2YL0"
+  apiKey: "AIzaSyAKK-3I9sciebFbsReaQYt51pwFm7UFedw",
+  authDomain: "dovizapp-c6e1a.firebaseapp.com",
+  projectId: "dovizapp-c6e1a",
+  storageBucket: "dovizapp-c6e1a.appspot.com",
+  messagingSenderId: "753739964508",
+  appId: "1:753739964508:web:4da823f9682ee5e4afc699",
+  measurementId: "G-B9H76X2SKW"
 };
 
 const app = initializeApp(firebaseConfig);
-export default app;
+const auth = getAuth();
+const db = getFirestore();
+
+export {auth,db};

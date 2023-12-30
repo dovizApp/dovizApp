@@ -1,9 +1,10 @@
 // screens/Login.js
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
-// import firebase from 'firebase/app';
-import 'firebase/auth';
+
+import { auth } from "../firebaseConfig";
 import firebase from '../firebaseConfig';
+import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -11,7 +12,7 @@ const Login = ({ navigation }) => {
 
   const handleLogin = async () => {
     try {
-      await firebase.auth().signInWithEmailAndPassword(email, password);
+      await signInWithEmailAndPassword(auth, email, password);
       console.log('Giriş başarılı!');
     } catch (error) {
       console.error('Giriş hatası:', error.message);
