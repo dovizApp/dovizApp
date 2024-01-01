@@ -2,9 +2,9 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 
-import { auth } from "../firebaseConfig";
-import firebase from '../firebaseConfig';
+import { auth ,db} from "../firebaseConfig";
 import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc, collection } from 'firebase/firestore';
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -12,8 +12,23 @@ const Login = ({ navigation }) => {
 
   const handleLogin = async () => {
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      console.log('Giriş başarılı!');
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Firestore'dan kullanıcı verilerini al
+      const userDocSnapshot = await getDoc(doc(db, 'users', user.uid));
+
+      // Kullanıcı Firestore'da kayıtlı ise rollerini kontrol et
+      if (userDocSnapshot.exists()) {
+        const userData = userDocSnapshot.data();
+        const userRoles = userData.roles || [];
+        console.log('Giriş başarılı!');
+        
+        navigation.replace(userRoles.includes('admin') ? 'WelcomeAdmin' : 'Welcome');
+      }else {
+          console.error('Firestore\'da kullanıcı kaydı bulunamadı.');
+        }
+
     } catch (error) {
       console.error('Giriş hatası:', error.message);
     }

@@ -2,6 +2,8 @@ import Login from './screens/Login';
 import Register from './screens/Register';
 import AdminDashboard from './components/AdminDashboard';
 import UserDashboard from './components/UserDashboard';
+import Welcome from './components/Welcome';
+import WelcomeAdmin from './components/WelcomeAdmin'; // Yeni eklenen dosyayı içe aktar
 
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
@@ -12,12 +14,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from './firebaseConfig';
 
-//import app from './firebaseConfig'; // firebaseConfig dosyanızın bulunduğu yola göre düzenleyin
-
-
 const Stack = createNativeStackNavigator();
 
-export default function App() {
+const App = () => {
   const [user, setUser] = useState(null);
   const [initializing, setInitializing] = useState(true);
 
@@ -35,43 +34,19 @@ export default function App() {
   if (initializing) {
     return null; // Auth durumu başlatılıyor ise bir şey gösterme
   }
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName={user ? 'UserDashboard' : 'Login'}>
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Register" component={Register} />
+        <Stack.Screen name="Welcome" component={Welcome} />
+        <Stack.Screen name="WelcomeAdmin" component={WelcomeAdmin} />
+        <Stack.Screen name="AdminDashboard" component={AdminDashboard} />
+        <Stack.Screen name="UserDashboard" component={UserDashboard} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
 
-  if (!user) {
-    return (
-      // Kullanıcı oturumu açmamışsa giriş ekranını göster
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Login">
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="Register" component={Register} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    );
-  }
 
-  if (user && user.roles && user.roles.includes('admin')) {
-    return (
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="AdminDashboard">
-          <Stack.Screen name="AdminDashboard" component={AdminDashboard} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    );
-  } else {
-    return (
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="UserDashboard">
-          <Stack.Screen name="UserDashboard" component={UserDashboard} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    );
-  }
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;

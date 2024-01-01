@@ -1,14 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { View, Text, Button } from 'react-native';
 import xml2js from 'react-native-xml2js';
-import { Picker } from '@react-native-picker/picker';
 
-
-
-const ExchangeRates = () => {
-  const [rates, setRates] = useState(null);
-  const [selectedCurrency, setSelectedCurrency] = useState('USD');
-  const [wallet, setWallet] = useState([]);
+const ExchangeRates = ({ setRates, addCurrencyToWallet }) => {
+  const [rates, setRatesLocal] = useState([]);
 
   useEffect(() => {
     const fetchExchangeRates = async () => {
@@ -25,6 +20,7 @@ const ExchangeRates = () => {
 
           // Döviz kurları JavaScript nesneleri olarak result objesinde bulunabilir
           const currencyRates = result.Tarih_Date.Currency;
+          setRatesLocal(currencyRates);
           setRates(currencyRates);
         });
       } catch (error) {
@@ -33,63 +29,20 @@ const ExchangeRates = () => {
     };
 
     fetchExchangeRates();
-  }, []);
-
-  const addCurrencyToWallet = () => {
-    const selectedRate = rates.find(rate => rate.$.Kod === selectedCurrency);
-    
-    if (selectedRate) {
-      const rateValue = selectedRate.ForexSelling[0];
-      const walletItem = {
-        currency: selectedCurrency,
-        rate: parseFloat(rateValue),
-        amount: 1, // Kullanıcıdan alınan miktar, örneğin 1 olarak sabit tuttum.
-      };
-
-      setWallet([...wallet, walletItem]);
-    }
-  };
-
-  // Cüzdan toplam fiyatını hesapla
-  const totalWalletPrice = wallet.reduce((total, item) => total + (item.rate * item.amount), 0);
+  }, [setRates]);
 
   return (
-    <View style={styles.container}>
+    <View>
       <Text>Döviz Kurları:</Text>
-      <Picker
-        selectedValue={selectedCurrency}
-        onValueChange={(itemValue) => setSelectedCurrency(itemValue)}
-      >
-        {rates && rates.map((rate, index) => (
-          <Picker.Item key={index} label={rate.$.Kod} value={rate.$.Kod} />
-        ))}
-      </Picker>
-      
-      <View style={styles.walletContainer}>
-        <Text>Cüzdanınız:</Text>
-        {wallet.map((item, index) => (
-          <Text key={index}>
-            {item.currency}: {item.amount} * {item.rate.toFixed(2)} = {(item.amount * item.rate).toFixed(2)}
-          </Text>
-        ))}
-      </View>
-
-      <Text>Toplam Cüzdan Fiyatı: {totalWalletPrice.toFixed(2)}</Text>
-      
-      <Button title="Cüzdana Ekle" onPress={addCurrencyToWallet} />
+      {rates.map((rate, index) => (
+        <Button
+          key={index}
+          title={`${rate.$.Kod}: ${rate.ForexSelling.map((selling) => selling)}`}
+          onPress={() => addCurrencyToWallet(rate.$.Kod)}
+        />
+      ))}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  walletContainer: {
-    marginTop: 20,
-  },
-});
 
 export default ExchangeRates;

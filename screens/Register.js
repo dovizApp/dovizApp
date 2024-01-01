@@ -1,45 +1,47 @@
 // Register.js
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 
-import { getAuth,createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth ,db} from "../firebaseConfig"; // Firebase modülünü doğru import et
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth, db } from '../firebaseConfig'; // Firebase modülünü doğru import et
+import { doc, setDoc, collection } from 'firebase/firestore';
 
-import { doc, setDoc, collection } from "firebase/firestore";
-
-
-
-const Register = () => {
+const Register = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleRegister = async () => {
     try {
       if (password.length < 6) {
-        console.error('Şifre en az 6 karakter olmalıdır.');
+        Alert.alert('Hata', 'Şifre en az 6 karakter olmalıdır.');
         return;
       }
+
       // Firebase Authentication ile kullanıcı kaydı yap
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-      //await createUserWithEmailAndPassword(auth, email, password);
+
       // Firestore'a kullanıcı dökümanı ekle
-      const userDocRef = doc(db, "users", user.uid);
+      const userDocRef = doc(db, 'users', user.uid);
+
+      // Yeni kayıt olan her kullanıcıya "user" rolü atandı
       await setDoc(userDocRef, {
-        roles: ["user"], // Yeni kullanıcıya varsayılan olarak "user" rolü atandı
+        roles: ['user'],
       });
 
-
-      console.log('Kayıt başarılı!');
-
-      // Eğer belirli bir şart sağlanıyorsa (örneğin, belirli bir e-posta adresi), admin rolü ekle
-    if (email === 'beyza@gmail.com' && password === 'beyza123') {
-      await setDoc(userDocRef, { roles: ['user', 'admin'] }, { merge: true });
-      
-      console.log('Kullanıcı admin olarak işaretlendi.');
-    }
+      // Success alert
+      Alert.alert(
+        'Başarı',
+        'Başarıyla kaydınız oluşturuldu. Giriş sayfasına yönlendiriliyorsunuz.',
+        [
+          {
+            text: 'Tamam',
+            onPress: () => navigation.navigate('Login'),
+          },
+        ]
+      );
     } catch (error) {
-      console.error('Kayıt hatası:', error.message);
+      Alert.alert('Hata', `Kayıt hatası: ${error.message}`);
     }
   };
 
