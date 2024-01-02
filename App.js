@@ -14,6 +14,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from './firebaseConfig';
 
+
 const Stack = createNativeStackNavigator();
 
 const App = () => {
