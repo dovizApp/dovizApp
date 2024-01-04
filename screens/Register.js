@@ -27,12 +27,13 @@ const Register = ({ navigation }) => {
       // Yeni kayıt olan her kullanıcıya "user" rolü atandı
       await setDoc(userDocRef, {
         roles: ['user'],
+        email: email
       });
 
       // Success alert
       Alert.alert(
-        'Başarı',
-        'Başarıyla kaydınız oluşturuldu. Giriş sayfasına yönlendiriliyorsunuz.',
+        'Kayıt Oluşturuldu.',
+        ' Giriş sayfasına yönlendiriliyorsunuz.',
         [
           {
             text: 'Tamam',
@@ -47,7 +48,8 @@ const Register = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text>Register Screen</Text>
+      <Text>Kayıt Ekranı</Text>
+      <Text></Text>
       <TextInput
         placeholder="E-mail"
         value={email}
@@ -61,6 +63,8 @@ const Register = ({ navigation }) => {
         secureTextEntry
         style={styles.input}
       />
+            <Text></Text>
+
       {password.length > 0 && password.length < 6 && (
         <Text style={styles.errorText}>Şifre en az 6 karakter olmalıdır.</Text>
       )}
@@ -75,6 +79,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor:"pink",
   },
   input: {
     height: 40,

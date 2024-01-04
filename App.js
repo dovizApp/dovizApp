@@ -6,82 +6,18 @@ import Welcome from './components/Welcome';
 import WelcomeAdmin from './components/WelcomeAdmin'; // Yeni eklenen dosyayı içe aktar
 
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View,Alert } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from './firebaseConfig';
-import messaging from '@react-native-firebase/messaging';
-import messaging from '@react-native-firebase/messaging';
+
+
 const Stack = createNativeStackNavigator();
 
 const App = () => {
-
-  const requestUserPermission= async() => {
-    const authStatus = await messaging().requestPermission();
-    const enabled =
-      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-  
-    if (enabled) {
-      console.log('Authorization status:', authStatus);
-    }
-  }
-
-
-  const getToken = async() => {
-    const token= await messaging().getToken()
-    console.log("Token=", token)
-  }
-
-  useEffect(() => {
-   if (requestUserPermission()) {
-
-    messaging().getToken().then(token => {
-      console.log(token);
-    });
-   }
-   else{
-    console.log("Failed token",authStatus)
-   }
-
-   messaging()
-      .getInitialNotification()
-      .then( async (remoteMessage) => {
-        if (remoteMessage) {
-          console.log(
-            'Notification caused app to open from quit state:',
-            remoteMessage.notification,
-          );
-        }
-      });
-
-      messaging().onNotificationOpenedApp(async (remoteMessage) => {
-        console.log(
-          'Notification caused app to open from background state:',
-          remoteMessage.notification,
-        );
-        
-      });
-
-          // Register background handler
-      messaging().setBackgroundMessageHandler(async remoteMessage => {
-        console.log('Message handled in the background!', remoteMessage);
-      }); 
-
-    
-        const unsubscribe = messaging().onMessage(async remoteMessage => {
-          Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
-        });
-    
-        return unsubscribe;
- 
-
-  },[])
-
-
   const [user, setUser] = useState(null);
   const [initializing, setInitializing] = useState(true);
 

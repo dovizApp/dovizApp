@@ -40,13 +40,15 @@ const Login = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text>Login Screen</Text>
+      <Text>Lütfen kullanıcı bilgilerinizi girerek sisteme giriş yapınız.</Text>
+      <Text>  </Text>
       <TextInput
         placeholder="E-mail"
         value={email}
         onChangeText={(text) => setEmail(text)}
         style={styles.input}
       />
+      
       <TextInput
         placeholder="Password"
         value={password}
@@ -54,8 +56,14 @@ const Login = ({ navigation }) => {
         secureTextEntry
         style={styles.input}
       />
+      <Text></Text>
       <Button title="Login" onPress={handleLogin} />
-      <Text onPress={navigateToRegister}>Don't have an account? Register here!</Text>
+      <Text></Text>
+      <Text onPress={navigateToRegister}>Hesabınız yok mu ? </Text>
+      <Text></Text>
+      <Text style={{ color: 'blue', fontWeight: 'bold', textDecorationLine: 'underline' }} onPress={navigateToRegister}>
+        Buradan kayıt olun !
+      </Text>
     </View>
   );
 };
@@ -65,6 +73,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor:"pink",
   },
   input: {
     height: 40,
